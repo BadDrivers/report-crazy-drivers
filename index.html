@@ -116,44 +116,51 @@ button:hover {
 </div>
 
 <!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-const { createClient } = supabase;
-const supabaseClient = createClient(
-  'https://xxxx.supabase.co',
-  'PUBLIC_ANON_KEY'
-);
+  const { createClient } = supabase;
 
+  // Initialize the client
+  const supabaseClient = createClient(
+    'https://YOURPROJECT.supabase.co',
+    'YOUR_PUBLIC_ANON_KEY'
+  );
 
-const form = document.querySelector('form');
+  // Example insert on form submit
+  async function submitForm() {
+    const state = document.getElementById("state").value;
+    const plateNo = document.getElementById("plateNo").value;
+    const place = document.getElementById("place").value;
+    const type = document.getElementById("type").value;
+    const data1 = document.getElementById("data1").value;
+    const data2 = document.getElementById("data2").value;
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    const { data, error } = await supabaseClient
+      .from('reports')
+      .insert([{
+        state: state,
+        plateno: plateNo,
+        place: place,
+        type: type,
+        data1: data1,
+        data2: data2
+      }]);
 
-  const formData = new FormData(form);
-
-  const { data, error } = await supabaseclient
-    .from('reports')
-    .insert([{
-      state: formData.get('state'),
-      plateno: formData.get('plateno'),
-      place: formData.get('place'),
-      type: formData.get('type'),
-      data1: formData.get('data1'),
-      data2: formData.get('data2')
-    }]);
-
-  if (error) {
-    alert('Submission failed');
-    console.error(error);
-  } else {
-    alert('Report submitted successfully');
-    form.reset();
+    if (error) {
+      console.error("Supabase insert error:", error);
+      alert("Error submitting data!");
+    } else {
+      alert("Data submitted successfully!");
+    }
   }
-});
+
+  // Attach to submit button
+  document.getElementById("submitBtn").addEventListener("click", submitForm);
 </script>
+
 
 </body>
 </html>
+
 
 
